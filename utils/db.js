@@ -1,27 +1,28 @@
-import { MongoClient, ObjectID } from 'mongodb';
+import { MongoClient } from 'mongodb';
+
+const host = process.env.DB_HOST || 'localhost';
+const port = process.env.DB_PORT || 27017;
+const database = process.env.DB_DATABASE || 'files_manager';
+
+// MongoDB client created
+const url = `mongodb://${host}:{port}`;
 
 class DBClient {
   constructor() {
-    const host = process.env.DB_HOST || 'localhost';
-    const port = process.env.DB_PORT || 27017;
-    const database = process.env.DB_DATABASE || 'files_manager';
-
-    // MongoDB client created
-    const uri = `mongodb://${host}:{port}`;
-    this.client = new MongoClient(uri, { useUnifiedTopology: true });
-    this.client.connect((error) => {
-        if (error) {
-            this.db = null;
-            console.error(error);
-        } else {
-            this.db = this.client.db(database);
-            console.log('DB connected');
-        }
+    this.client = new MongoClient(url, { useUnifiedTopology: true, useNewUrlParser: true });
+    this.client.connect((err) => {
+      if (err) {
+        this.db = null;
+        console.error(err);
+      } else {
+        this.db = this.client.db(database);
+        console.log(err);
+      }
     });
    }
 
    isAlive () {
-    return !!this.db;
+    return this.client.isConnected;
    }
 
    async nbUsers() {
@@ -38,5 +39,4 @@ class DBClient {
 }
 
 const dbClient = new DBClient();
-
-export default dbClient;
+module.exports = dbClient;
