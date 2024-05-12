@@ -5,7 +5,7 @@ const port = process.env.DB_PORT || 27017;
 const database = process.env.DB_DATABASE || 'files_manager';
 
 // MongoDB client created
-const url = `mongodb://${host}:{port}`;
+const url = `mongodb://${host}:${port}`;
 
 class DBClient {
   constructor() {
