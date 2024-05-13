@@ -1,4 +1,5 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, } from 'mongodb';
+import sha1 from 'sha1';
 
 const host = process.env.DB_HOST || 'localhost';
 const port = process.env.DB_PORT || 27017;
@@ -35,6 +36,28 @@ class DBClient {
     if (!this.isAlive()) return 0;
     return this.db.collection('files').countDocuments();
    }
+
+   async getUser(email) {
+    await this.client.connect();
+    const user = await this.client.db(this.database).collection('users').find({ email }).toArray();
+    if (!user.length) return null;
+    return user[0];
+  }
+
+  async userExist(email) {
+    const user = await this.getUser(email);
+    if (user) return true;
+    return false;
+  }
+
+  async createUser(email, password) {
+    const hashPwd = sha1(password);
+    await this.client.connect();
+
+    const res = await this.client.db(this.database)
+      .collection('users').insertOne({ email, password: hashPwd });
+    return res;
+  }
 }
 
 const dbClient = new DBClient();
