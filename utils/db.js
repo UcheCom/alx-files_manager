@@ -26,13 +26,13 @@ class DBClient {
 
    async nbUsers() {
     // This gets the number of documents in the collection users
-    if (!this.isAlive) return 0;
+    if (!this.isAlive()) return 0;
     return this.db.collection('users').countDocuments();
    }
 
    async nbFiles() {
     // This gets the number of documents in the collection files
-    if (!this.isAlive) return 0;
+    if (!this.isAlive()) return 0;
     return this.db.collection('files').countDocuments();
    }
 }
